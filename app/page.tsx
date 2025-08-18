@@ -6,7 +6,10 @@ const Page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className='flex justify-between px-6 mt-4'>
-        <SidebarTrigger />
+        <div className='hidden sm:flex' />
+        <div className='flex sm:hidden'>
+          <SidebarTrigger />
+        </div>
         <a
           href="https://t.me/gorkamanager"
           target="_blank"

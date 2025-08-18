@@ -84,7 +84,7 @@ export const VacancyList = () => {
                     const hashtags = hashtagsMatch.map((tag, i) => (
                         <span
                             key={i}
-                            className="px-2 py-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded-full"
+                            className="px-2 py-1 text-xs bg-white border border-[#B3C9F8] text-blue-500 rounded-full"
                         >
                             {tag}
                         </span>
@@ -109,41 +109,20 @@ export const VacancyList = () => {
                     return (
                         <div
                             key={vacancy.id}
-                            className="flex flex-col h-full gap-4 border border-gray-200 hover:border-blue-300 px-6 py-6 rounded-2xl bg-white hover:shadow-lg transition-all duration-200"
+                            className="flex flex-col h-full gap-4 border border-gray-200 px-6 py-6 rounded-2xl bg-neutral-50"
                         >
                             {/* Header with position and employment type */}
-                            <div className="flex justify-between items-start gap-4">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
                                 <div className="flex-1">
                                     {vacancy.position && (
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                                        <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
                                             {vacancy.position}
                                         </h3>
                                     )}
-
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {vacancy.employmentType && (
-                                            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-50 text-green-700 rounded-full">
-                                                <MapPin className="h-3 w-3" />
-                                                {vacancy.employmentType}
-                                            </span>
-                                        )}
-                                        {vacancy.salary && (
-                                            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-yellow-50 text-yellow-700 rounded-full">
-                                                <DollarSign className="h-3 w-3" />
-                                                {vacancy.salary}
-                                            </span>
-                                        )}
-                                        {vacancy.sphere && (
-                                            <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-purple-50 text-purple-700 rounded-full">
-                                                <Briefcase className="h-3 w-3" />
-                                                {vacancy.sphere}
-                                            </span>
-                                        )}
-                                    </div>
                                 </div>
 
                                 {/* Hashtags */}
-                                <div className="flex flex-wrap gap-1 max-w-48">
+                                <div className="flex flex-wrap gap-1 max-w-64">
                                     {hashtags.slice(0, 3)}
                                     {hashtags.length > 3 && (
                                         <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
@@ -155,13 +134,22 @@ export const VacancyList = () => {
 
                             {/* Main content */}
                             <div className="flex-1">
-                                <div className="border-l-4 border-blue-200 bg-gray-50 rounded-r-xl">
-                                    <div className="p-4">
+                                <div className="border-l-4 border-blue-200 bg-white rounded-r-xl">
+                                    <div className="border border-[#B3C9F8] rounded-l-sm rounded-r-2xl p-4">
+                                        <div className='flex justify-end items-center'>
+                                            <span className='pt-2 text-3xl font-bold text-sky-500 bg-sky-100 px-3 rounded-full'>
+                                                ❜❜
+                                            </span>
+                                        </div>
+                                        {/* Добавьте этот код в className для сворачивания и разворачивания */}
+                                        {/* ${isExpanded ? '' : 'line-clamp-6'} */}
                                         <div
-                                            className={`text-sm text-gray-700 max-w-none ${isExpanded ? '' : 'line-clamp-6'}`}
+                                            className={`-mt-0 sm:-mt-6 text-base sm:text-sm text-gray-700 max-w-none `}
                                             dangerouslySetInnerHTML={{ __html: text }}
                                         />
-                                        {text.length > 300 && (
+                                        {/* Этот от откомментируйте для полного функционала*/}
+
+                                        {/* {text.length > 300 && (
                                             <button
                                                 onClick={() => toggleExpanded(vacancy.id)}
                                                 className="mt-2 flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
@@ -178,7 +166,7 @@ export const VacancyList = () => {
                                                     </>
                                                 )}
                                             </button>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +179,7 @@ export const VacancyList = () => {
                                 </time>
 
                                 <a href={vacancy.url} target="_blank" rel="noopener noreferrer">
-                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                                    <Button className="rounded-xl">
                                         Откликнуться
                                         <Image
                                             src="/telegram-icon.png"

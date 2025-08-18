@@ -51,10 +51,10 @@ export function AppSidebar() {
         filters.sphere.length > 0 || filters.search.length > 0;
 
     return (
-        <Sidebar>
-            <SidebarHeader className="border-b border-gray-200 p-6">
+        <Sidebar className='bg-none border-none'>
+            <SidebarHeader className="p-6">
                 <div className="flex items-center gap-2 mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Amplifr teams</h2>
+                    <h2 className="text-xl font-semibold text-[#5D6567]">amplifr &#10095;&#10095; teams</h2>
                 </div>
 
                 {/* Search Bar */}
@@ -90,15 +90,10 @@ export function AppSidebar() {
                                     size="sm"
                                     onClick={clearAllFilters}
                                     disabled={!hasActiveFilters}
-                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 disabled:text-gray-400"
+                                    className="text-sky-600 hover:text-sky-700 hover:bg-sky-50 disabled:text-gray-400 p-2"
                                 >
                                     Сбросить все
                                 </Button>
-                                {hasActiveFilters && (
-                                    <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                                        Активны
-                                    </span>
-                                )}
                             </div>
 
                             {/* Employment Type Filter */}
