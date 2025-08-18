@@ -25,17 +25,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <QueryProvider>
           <SidebarProvider>
             <FiltersProvider>
-              <AppSidebar />
-              {children}
+              <div className="flex min-h-screen">
+                <AppSidebar />
+                <div className="flex-1 flex flex-col">
+                  {children}
+                </div>
+              </div>
             </FiltersProvider>
           </SidebarProvider>
         </QueryProvider>

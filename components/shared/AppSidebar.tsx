@@ -52,7 +52,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar className='bg-none border-none'>
-            <SidebarHeader className="p-6">
+            <SidebarHeader className="mt-8 p-6">
                 <div className="flex items-center gap-2 mb-4">
                     <h2 className="text-xl font-semibold text-[#5D6567]">amplifr &#10095;&#10095; teams</h2>
                 </div>
@@ -79,7 +79,7 @@ export function AppSidebar() {
                 </form>
             </SidebarHeader>
 
-            <SidebarContent className="p-6">
+            <SidebarContent className="p-4">
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu className="space-y-6">
