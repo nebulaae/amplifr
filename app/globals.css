@@ -115,6 +115,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+
+    ::-webkit-scrollbar {
+      width: 0;
+    }
   }
 
   body {

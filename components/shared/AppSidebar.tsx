@@ -18,7 +18,20 @@ import {
 } from "@/components/ui/sidebar";
 
 const employmentTypes = ['Удаленно', 'Гибрид', 'Офис'];
-const experiences = ['Меньше года', '1-3 года', 'От 5 лет'];
+
+const salaryRanges = [
+    { value: '10000-50000', label: '10 000 - 50 000 ₽' },
+    { value: '50000-100000', label: '50 000 - 100 000 ₽' },
+    { value: '100000-150000', label: '100 000 - 150 000 ₽' },
+    { value: '150000-200000', label: '150 000 - 200 000 ₽' }
+];
+
+const freshnessOptions = [
+    { value: 'today', label: 'Сегодня' },
+    { value: '3days', label: 'За 3 дня' },
+    { value: 'week', label: 'За неделю' }
+];
+
 const spheres = [
     'Менеджмент', 'Маркетинг', 'Реклама и PR', 'HR', 'Креатив', 'Дизайн',
     'Продажи', 'IT', 'Клиентский сервис и поддержка', 'Финансы', 'SMM', 'Копирайтинг', 'Другое'
@@ -28,8 +41,8 @@ export function AppSidebar() {
     const { filters, setFilters, updateFilter } = useFilters();
     const [searchInput, setSearchInput] = useState(filters.search);
 
-    const handleCheckboxChange = (value: string, category: 'type' | 'experience' | 'sphere') => {
-        const current = filters[category];
+    const handleCheckboxChange = (value: string, category: 'type' | 'experience' | 'sphere' | 'salary' | 'freshness') => {
+        const current = filters[category] || [];
         const newValues = current.includes(value)
             ? current.filter(v => v !== value)
             : [...current, value];
@@ -43,46 +56,25 @@ export function AppSidebar() {
     };
 
     const clearAllFilters = () => {
-        setFilters({ type: [], experience: [], sphere: [], search: '' });
+        setFilters({ type: [], experience: [], sphere: [], salary: [], freshness: [], search: '' });
         setSearchInput('');
     };
 
     const hasActiveFilters = filters.type.length > 0 || filters.experience.length > 0 ||
-        filters.sphere.length > 0 || filters.search.length > 0;
+        filters.sphere.length > 0 || filters.salary?.length > 0 || filters.freshness?.length > 0 || filters.search.length > 0;
 
     return (
         <Sidebar className='bg-none border-none'>
-            <SidebarHeader className="mt-8 p-6">
-                <div className="flex items-center gap-2 mb-4">
+            <SidebarHeader className="-mt-2 p-6">
+                <div className="flex items-center gap-2">
                     <h2 className="text-xl font-semibold text-[#5D6567]">amplifr &#10095;&#10095; teams</h2>
                 </div>
-
-                {/* Search Bar */}
-                <form onSubmit={handleSearchSubmit} className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                        type="text"
-                        placeholder="Поиск вакансий..."
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="pl-10 pr-4 py-2 w-full border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    {searchInput && (
-                        <button
-                            type="button"
-                            onClick={() => setSearchInput('')}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                            <X className="h-4 w-4" />
-                        </button>
-                    )}
-                </form>
             </SidebarHeader>
 
             <SidebarContent className="p-4">
                 <SidebarGroup>
                     <SidebarGroupContent>
-                        <SidebarMenu className="space-y-6">
+                        <SidebarMenu className="space-y-4">
                             {/* Clear All Button */}
                             <div className="flex justify-between items-center">
                                 <Button
@@ -126,36 +118,6 @@ export function AppSidebar() {
                                 </div>
                             </div>
 
-                            {/* Experience Filter */}
-                            <div className="space-y-3">
-                                <SidebarGroupLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                                    Опыт работы
-                                    {filters.experience.length > 0 && (
-                                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
-                                            {filters.experience.length}
-                                        </span>
-                                    )}
-                                </SidebarGroupLabel>
-                                <div className="space-y-2">
-                                    {experiences.map(item => (
-                                        <div key={item} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
-                                            <Checkbox
-                                                id={`exp-${item}`}
-                                                checked={filters.experience.includes(item)}
-                                                onCheckedChange={() => handleCheckboxChange(item, 'experience')}
-                                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                                            />
-                                            <Label
-                                                htmlFor={`exp-${item}`}
-                                                className="text-sm text-gray-700 cursor-pointer flex-1"
-                                            >
-                                                {item}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
                             {/* Sphere Filter */}
                             <div className="space-y-3">
                                 <SidebarGroupLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -166,7 +128,7 @@ export function AppSidebar() {
                                         </span>
                                     )}
                                 </SidebarGroupLabel>
-                                <div className="space-y-2 max-h-64 overflow-y-auto">
+                                <div className="space-y-2 h-full">
                                     {spheres.map(item => (
                                         <div key={item} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
                                             <Checkbox
@@ -180,6 +142,66 @@ export function AppSidebar() {
                                                 className="text-sm text-gray-700 cursor-pointer flex-1"
                                             >
                                                 {item}
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Salary Range Filter */}
+                            <div className="space-y-3">
+                                <SidebarGroupLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    Зарплата
+                                    {filters.salary?.length > 0 && (
+                                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                                            {filters.salary.length}
+                                        </span>
+                                    )}
+                                </SidebarGroupLabel>
+                                <div className="space-y-2">
+                                    {salaryRanges.map(item => (
+                                        <div key={item.value} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
+                                            <Checkbox
+                                                id={`salary-${item.value}`}
+                                                checked={filters.salary?.includes(item.value) || false}
+                                                onCheckedChange={() => handleCheckboxChange(item.value, 'salary')}
+                                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                            />
+                                            <Label
+                                                htmlFor={`salary-${item.value}`}
+                                                className="text-sm text-gray-700 cursor-pointer flex-1"
+                                            >
+                                                {item.label}
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Freshness Filter */}
+                            <div className="space-y-3">
+                                <SidebarGroupLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                    Свежесть
+                                    {filters.freshness?.length > 0 && (
+                                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                                            {filters.freshness.length}
+                                        </span>
+                                    )}
+                                </SidebarGroupLabel>
+                                <div className="space-y-2">
+                                    {freshnessOptions.map(item => (
+                                        <div key={item.value} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md transition-colors">
+                                            <Checkbox
+                                                id={`freshness-${item.value}`}
+                                                checked={filters.freshness?.includes(item.value) || false}
+                                                onCheckedChange={() => handleCheckboxChange(item.value, 'freshness')}
+                                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                            />
+                                            <Label
+                                                htmlFor={`freshness-${item.value}`}
+                                                className="text-sm text-gray-700 cursor-pointer flex-1"
+                                            >
+                                                {item.label}
                                             </Label>
                                         </div>
                                     ))}

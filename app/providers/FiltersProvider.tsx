@@ -6,6 +6,8 @@ export type FiltersState = {
     type: string[];
     experience: string[];
     sphere: string[];
+    salary: string[];
+    freshness: string[];
     search: string;
 };
 
@@ -22,7 +24,9 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
         type: [],
         experience: [],
         sphere: [],
-        search: '',
+        salary: [],
+        freshness: [],
+        search: ''
     });
 
     const updateFilter = (key: keyof FiltersState, value: string[] | string) => {

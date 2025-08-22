@@ -18,6 +18,8 @@ export interface VacancyFilters {
     experience?: string[];
     sphere?: string[];
     search?: string;
+    salary?: string[];      // 👈 added
+    freshness?: string[];   // 👈 added
 }
 
 export interface VacancyResponse {
@@ -39,15 +41,22 @@ export function useVacancies(filters: VacancyFilters) {
             params.append('limit', '20');
 
             if (filters.search) params.append('search', filters.search);
+
             if (filters.type) filters.type.forEach(v => params.append('type', v));
             if (filters.experience) filters.experience.forEach(v => params.append('experience', v));
             if (filters.sphere) filters.sphere.forEach(v => params.append('sphere', v));
+
+            // 👇 add missing salary + freshness
+            if (filters.salary) filters.salary.forEach(v => params.append('salary', v));
+            if (filters.freshness) filters.freshness.forEach(v => params.append('freshness', v));
 
             const res = await api.get<VacancyResponse>('/', { params });
             return res.data;
         },
         getNextPageParam: (lastPage) => {
-            return lastPage.pagination.hasMore ? lastPage.pagination.currentPage + 1 : undefined;
+            return lastPage.pagination.hasMore
+                ? lastPage.pagination.currentPage + 1
+                : undefined;
         },
         initialPageParam: 1,
     });
