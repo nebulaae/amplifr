@@ -6,7 +6,6 @@ import { Input } from '../ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFilters } from '@/app/providers/FiltersProvider';
-import { Search, Filter, X } from 'lucide-react';
 import {
     Sidebar,
     SidebarContent,
@@ -33,8 +32,9 @@ const freshnessOptions = [
 ];
 
 const spheres = [
-    'Менеджмент', 'Маркетинг', 'Реклама и PR', 'HR', 'Креатив', 'Дизайн',
-    'Продажи', 'IT', 'Клиентский сервис и поддержка', 'Финансы', 'SMM', 'Копирайтинг', 'Другое'
+    'Дизайн',
+    'SMM',
+    'Копирайтинг'
 ];
 
 export function AppSidebar() {

@@ -41,10 +41,10 @@ export const Navbar = () => {
                 }`}
         >
             <div className='flex items-center justify-between px-6 py-4'>
-                <div className='hidden sm:flex'>
+                <div className='hidden lg:flex'>
                 </div>
-                <div className='flex sm:hidden'>
-                    <SidebarTrigger />
+                <div className='flex lg:hidden'>
+                    <SidebarTrigger  />
                 </div>
                 <a
                     href="https://t.me/gorkamanager"

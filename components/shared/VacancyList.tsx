@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 import { Button } from '../ui/button';
-import { Loader2, Briefcase} from 'lucide-react';
+import { Loader2, Briefcase, ChevronDown, ChevronUp } from 'lucide-react';
 import { useVacancies, Vacancy } from '@/hooks/useVacancies';
 import { useFilters } from '@/app/providers/FiltersProvider';
 import { useEffect, useRef, useCallback, useState } from 'react';
@@ -84,8 +84,8 @@ export const VacancyList = () => {
                     const isExpanded = expandedVacancies.has(vacancy.id);
                     let text = vacancy.text;
 
-                    // Extract hashtags
-                    const hashtagsMatch = text.match(/#\S+/g) || [];
+                    // Extract hashtags (employment + salary only)
+                    const hashtagsMatch = text.match(/#(удаленно|офис|гибрид|от[^\s]+)/gi) || [];
                     const hashtags = hashtagsMatch.map((tag, i) => (
                         <span
                             key={i}
@@ -95,12 +95,35 @@ export const VacancyList = () => {
                         </span>
                     ));
 
-                    // Clean text
+                    // Extract salary (support "З/П", "Зп", "Зарплата")
+                    let salaryMatch = text.match(/__\s*(З[\/]?П|Зп|Зарплата)[^_]*__/i);
+                    let salary = "";
+                    if (salaryMatch) {
+                        salary = salaryMatch[0].replace(/__/g, "").trim();
+                    }
+
+                    // Remove position duplicate from text if it matches vacancy.position
+                    if (vacancy.position) {
+                        const escapedPos = vacancy.position.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+                        // Covers "**Копирайтер**", "Копирайтер", or with newline after
+                        const positionRegex = new RegExp(
+                            `^(\\*\\*\\s*)?${escapedPos}(\\s*\\*\\*)?\\s*\\n?`,
+                            "i"
+                        );
+
+                        text = text.replace(positionRegex, "");
+                    }
+
+                    // Clean salary from text (so it won't duplicate in body)
+                    text = text.replace(/__\s*(З[\/]?П|Зп|Зарплата)[^_]*__\s*/i, "");
+
+                    // Remove hashtags, formatting, and add spacing
                     text = text.replace(/Откликнуться[\s\S]*/i, '');
                     text = text.replace(/#\S+/g, '');
                     text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-                    text = text.replace(/\n+/g, '<br/>')
-                    text = text.replace(/__.*?__\s*/i, '');
+                    text = text.replace(/\n{2,}/g, '<br/><br/>');
+                    text = text.replace(/\n/g, '<br/>');
                     text = text.replace(/\*/g, '');
 
                     // Format date
@@ -114,48 +137,44 @@ export const VacancyList = () => {
                     return (
                         <div
                             key={vacancy.id}
-                            className="h-full"
+                            className="flex flex-col gap-4 border border-gray-200 p-4 sm:p-6 rounded-2xl bg-slate-50 h-full"
                         >
-                            <div className='flex flex-col gap-6 border border-gray-200 px-6 py-6 rounded-2xl bg-slate-50'>
-                                {/* Header with position and employment type */}
-                                <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
-                                    <div className="flex-1">
-                                        {vacancy.position && (
-                                            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
-                                                {vacancy.position}
-                                            </h3>
-                                        )}
-                                    </div>
-
-                                    {/* Hashtags */}
-                                    <div className="flex flex-wrap gap-1 max-w-64">
-                                        {hashtags.slice(0, 10)}
-                                        {/* {hashtags.length > 3 && (
-                                        <span className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                                            +{hashtags.length - 3}
-                                        </span>
-                                    )} */}
-                                    </div>
+                            {/* Header: salary instead of position */}
+                            {/* Header with position and salary */}
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                                <div className="flex-1">
+                                    {vacancy.position && (
+                                        <h3 className="text-xl font-semibold text-gray-900 mb-1 line-clamp-2">
+                                            {vacancy.position}
+                                        </h3>
+                                    )}
                                 </div>
 
-                                {/* Main content */}
-                                <div className="flex-1">
-                                    <div className="border-l-4 border-[#B3C9F8] bg-white rounded-r-xl">
-                                        <div className="border border-[#B3C9F8] border-l-0 rounded-l-xl rounded-r-2xl p-4">
-                                            <div className='flex justify-end items-center'>
-                                                <span className='pt-1 text-2xl font-bold text-sky-500 bg-sky-100 px-2.5 rounded-full'>
-                                                    ❜❜
-                                                </span>
-                                            </div>
-                                            {/* Добавьте этот код в className для сворачивания и разворачивания */}
-                                            {/* ${isExpanded ? '' : 'line-clamp-6'} */}
-                                            <div
-                                                className={`-mt-0 sm:-mt-6 text-base sm:text-sm text-gray-700 max-w-none w-[88%]`}
-                                                dangerouslySetInnerHTML={{ __html: text }}
-                                            />
-                                            {/* Этот от откомментируйте для полного функционала*/}
+                                {/* Hashtags (working already) */}
+                                <div className="flex flex-wrap gap-1 max-w-64">
+                                    {hashtags.slice(0, 3)}
+                                </div>
+                            </div>
 
-                                            {/* {text.length > 300 && (
+                            {/* Main content */}
+                            <div className="flex-1">
+                                <div className="border-l-4 border-[#B3C9F8] bg-white rounded-r-xl">
+                                    <div className="border border-[#B3C9F8] border-l-0 rounded-r-2xl p-4">
+                                        <div className='flex justify-end items-center'>
+                                            <span className='pt-1 text-2xl font-bold text-sky-500 bg-sky-100 px-2.5 rounded-full'>
+                                                ❜❜
+                                            </span>
+                                        </div>
+                                        {salary && (
+                                            <p className="text-sm font-semibold mb-6 w-[90%]">
+                                                {salary}
+                                            </p>
+                                        )}
+                                        <div
+                                            className={`-mt-0 sm:-mt-4 text-base sm:text-sm text-gray-700 max-w-none w-[95%] ${isExpanded ? '' : 'line-clamp-16'}`}
+                                            dangerouslySetInnerHTML={{ __html: text }}
+                                        />
+                                        {text.length > 300 && (
                                             <button
                                                 onClick={() => toggleExpanded(vacancy.id)}
                                                 className="mt-2 flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
@@ -172,28 +191,28 @@ export const VacancyList = () => {
                                                     </>
                                                 )}
                                             </button>
-                                        )} */}
-                                        </div>
+                                        )}
                                     </div>
-                                    {/* Footer */}
-                                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                                        <time className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
-                                            {formatted}
-                                        </time>
+                                </div>
 
-                                        <a href={vacancy.url} target="_blank" rel="noopener noreferrer">
-                                            <Button className="rounded-xl">
-                                                Откликнуться
-                                                <Image
-                                                    src="/telegram-icon.png"
-                                                    alt="Telegram"
-                                                    width={18}
-                                                    height={18}
-                                                    className="ml-2"
-                                                />
-                                            </Button>
-                                        </a>
-                                    </div>
+                                {/* Footer */}
+                                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                                    <time className="flex items-center gap-1 text-xs sm:text-sm text-gray-500">
+                                        {formatted}
+                                    </time>
+
+                                    <a href={vacancy.url} target="_blank" rel="noopener noreferrer">
+                                        <Button className="rounded-xl">
+                                            Откликнуться
+                                            <Image
+                                                src="/telegram-icon.png"
+                                                alt="Telegram"
+                                                width={18}
+                                                height={18}
+                                                className="ml-2"
+                                            />
+                                        </Button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -202,14 +221,16 @@ export const VacancyList = () => {
             </div>
 
             {/* Loading indicator for pagination */}
-            {isFetchingNextPage && (
-                <div className="flex justify-center py-8">
-                    <div className="flex items-center gap-2">
-                        <Loader2 className="h-5 w-5 animate-spin text-[#B3C9F8]" />
-                        <span className="text-sm text-gray-600">Загружаем еще вакансии...</span>
+            {
+                isFetchingNextPage && (
+                    <div className="flex justify-center py-8">
+                        <div className="flex items-center gap-2">
+                            <Loader2 className="h-5 w-5 animate-spin text-[#B3C9F8]" />
+                            <span className="text-sm text-gray-600">Загружаем еще вакансии...</span>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Observer element for infinite scroll */}
             <div
@@ -228,11 +249,13 @@ export const VacancyList = () => {
             </div>
 
             {/* End message */}
-            {!hasNextPage && allVacancies.length > 0 && (
-                <div className="text-center py-8 text-gray-500">
-                    <p>Вы просмотрели все доступные вакансии</p>
-                </div>
-            )}
-        </div>
+            {
+                !hasNextPage && allVacancies.length > 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                        <p>Вы просмотрели все доступные вакансии</p>
+                    </div>
+                )
+            }
+        </div >
     );
 };
